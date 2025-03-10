@@ -1,6 +1,6 @@
 # Introduction
 
-Connectivity Relationship Recognition in Piping and Instrumentation Diagrams Using Graph Neural Networks
+Title: Connectivity Relationship Recognition in Piping and Instrumentation Diagrams Using Graph Neural Networks
 
 # Contribution
 
