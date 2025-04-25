@@ -5,13 +5,38 @@ from torch_geometric.data import Data
 import numpy as np
 from GNN_structure import GNNModel_1layer,GNNModel_4layer,GNNModel_2layer,GNNModel_3layer
 from data_loader import compute_edge_mid_distance,compute_edge_box_distance
-from step1_xml2json import draw_objects_and_lines
 import time
 import random
 import re
 import networkx as nx
 from networkx.algorithms.similarity import graph_edit_distance
 
+def draw_objects_and_lines(json_file_path, image_file_path, output_image_path,draw_objects=None,draw_lines=None):
+    """
+    读取 JSON 文件中的 objects 和 lines 信息，并在图片上绘制。
+    :param json_file_path: 输入 JSON 文件路径
+    :param image_file_path: 输入图片路径
+    :param output_image_path: 输出绘制结果的图片路径
+    """
+    with open(json_file_path, "r") as f:
+        data = json.load(f)
+    image = cv2.imread(image_file_path)
+    if image is None:
+        raise FileNotFoundError(f"Image not found: {image_file_path}")
+    if draw_objects:
+        for obj_id, obj in data["objects"].items():
+            x, y, w, h = obj["x"], obj["y"], obj["w"], obj["h"]
+            top_left = (int(x - w / 2), int(y - h / 2))
+            bottom_right = (int(x + w / 2), int(y + h / 2))
+            cv2.putText(image, f"Obj {obj_id}", top_left, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+    if draw_lines:
+        for line in data["lines"]:
+            x1, y1, x2, y2 = line["x1"], line["y1"], line["x2"], line["y2"]
+            cv2.line(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 0, 0), 2)
+            mid_point = (int((x1 + x2) / 2), int((y1 + y2) / 2))
+            #cv2.putText(image, f"Line {line['line_id']}", mid_point, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+    cv2.imwrite(output_image_path, image)
+    print(f"Output saved to {output_image_path}")
 
 def get_predict_score(edge_index,probabilities,x,y):
     node_a = x
