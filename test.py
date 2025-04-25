@@ -10,6 +10,7 @@ import random
 import re
 import networkx as nx
 from networkx.algorithms.similarity import graph_edit_distance
+import cv2
 
 def draw_objects_and_lines(json_file_path, image_file_path, output_image_path,draw_objects=None,draw_lines=None):
     """
